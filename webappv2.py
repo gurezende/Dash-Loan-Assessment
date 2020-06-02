@@ -8,7 +8,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import Normalizer
 from sklearn.tree import DecisionTreeClassifier
 import pickle
 
@@ -114,6 +114,10 @@ def gather_inputs(n_clicks,amount, age, duration, house, checking):
     else:
         df = pd.DataFrame([[amount, age, duration, house, 0,0,0]], columns=['amount', 'age', 'months_loan_duration','years_at_residence', 'checking_balance_< 0 DM','checking_balance_> 200 DM','checking_balance_unknown'])
 
+    #Normalize DataFrame
+    norm = Normalizer()
+    df = norm.fit_transform(df)
+
     #Load saved model from disk
     model = pickle.load(open('DTClass_model.sav', 'rb'))
     result = model.predict(df)
@@ -123,7 +127,6 @@ def gather_inputs(n_clicks,amount, age, duration, house, checking):
         return 'Based on your input, your credit is pre-approved. Please talk to your account manager. Thanks!'
     else:
         return 'Based on your input, your credit was NOT approved. Thanks!'
-
 
 
 
